@@ -1,27 +1,50 @@
 import processing.serial.*;
 import grafica.*;
-void setup()
-{
-  size(700,700);
-  
-  printArray(Serial.list());
-}
-void draw()
-{
-  drawBack();
-  drawMeteor(mouseX, mouseY);
+import deadpixel.keystone.*;
+
+Keystone ks;
+CornerPinSurface surface;
+PGraphics offscreen;
+
+void setup() {
+  size(900, 900, P3D);
+  ks = new Keystone(this);
+  surface = ks.createCornerPinSurface(700, 700, 20);
+  offscreen = createGraphics(700, 700, P3D);
 }
 
-void drawBack(){
-  fill(153);
-  rect(0, 0, 700, 700);
-  fill(#7CECED);
-  rect(100, 100, 500, 500);
-  fill(#11CC2B);
-  rect(100, 500, 500, 100);
+void draw() {
+  PVector surfaceMouse = surface.getTransformedMouse();
+  offscreen.beginDraw();
+  offscreen.background(255);
+  offscreen.fill(#7CECED);
+  offscreen.rect(100, 100, 500, 500);
+  offscreen.fill(#11CC2B);
+  offscreen.rect(100, 500, 500, 100);
+  offscreen.fill(0, 0, 0);
+  drawMeteor(surfaceMouse.x, surfaceMouse.y, 30);
+  offscreen.circle(surfaceMouse.x, surfaceMouse.y, 30);
+  offscreen.endDraw();
+  background(0);
+  surface.render(offscreen);
 }
 
-void drawMeteor(int mouseX, int mouseY){
-  fill(0);
-  circle(mouseX, mouseY, 30);
+void drawMeteor(float x, float y, int z){
+  offscreen.circle(x, y, z);
+}
+
+void keyPressed() {
+  switch(key) {
+  case 'c':
+    ks.toggleCalibration();
+    break;
+
+  case 'l':
+    ks.load();
+    break;
+
+  case 's':
+    ks.save();
+    break;
+  }
 }
