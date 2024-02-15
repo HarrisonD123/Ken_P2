@@ -13,18 +13,24 @@ PImage[] fire = new PImage[24];
 PImage crater;
 
 void drawRock(int x, int y, int z){
+  x = (int)convToProj(x);
+  y = (int)convToProj(y);
   offscreen.fill(135);
   offscreen.circle(x, y, z);
 }
 
 //assume width 30, as its the meteor width
 void drawMeteor(int x, int y, int z){
-  offscreen.image(fire[frameCount%24], x-30, y-70, 60, 80);
+  x_ = (int)convToProj(x);
+  y_ = (int)convToProj(y);
+  offscreen.image(fire[frameCount%24], x_-30, y_-70, 60, 80);
   drawRock(x, y, z);
 }
 
 //would recommend 40 for small, scale up as needed :3
 void drawCrater(int x, int y, float size){
+  x = (int)convToProj(x);
+  y = (int)convToProj(y);
   offscreen.image(crater, x-size/2, y-(size/4), size, size/2);
 }
 
