@@ -6,9 +6,13 @@ Keystone ks;
 CornerPinSurface surface;
 PGraphics offscreen;
 
-//loadTable
+Table table;
+Table scopedTable;
 
 void setup() {
+  table = loadTable("meteors.csv", "header");
+  scopedTable = scrawlYear(2012);//name year location mass
+  
   size(900, 900, P3D);
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(700, 700, 20);
@@ -33,6 +37,19 @@ void draw() {
 
 void drawMeteor(float x, float y, int z){
   offscreen.circle(x, y, z);
+}
+//name  id  nametype  recclass  mass (g)  fall  year  reclat  reclong  GeoLocation
+Table scrawlYear(int meteorYear){
+  scopedTable = table;
+  int i = 0;
+  for (TableRow row : table.rows()) {
+    if (row.getFloat("year") == meteorYear){
+      table.removeRow(i);
+    } else {
+      i++;
+    }
+  }
+  return null;
 }
 
 void keyPressed() {
