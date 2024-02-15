@@ -1,64 +1,79 @@
-import deadpixel.keystone.*;
+ArrayList<Float> meteorites = new ArrayList<Float>(); // List of meteorites implemented as a queue.
 
-Keystone ks;
-CornerPinSurface surface;
+//int meteoriteMass = meteoriteMasses[0];
+float minMass = 0;
+float maxMass = 100;
 
-PGraphics offscreen;
+boolean falling[];
 
-void setup() {
-  // Keystone will only work with P3D or OPENGL renderers, 
-  // since it relies on texture mapping to deform
-  size(800, 600, P3D);
+int prevLoc[] = {0, 0}; // 2D Array per toio as well ------------------------- TODO
 
-  ks = new Keystone(this);
-  surface = ks.createCornerPinSurface(400, 300, 20);
-  
-  // We need an offscreen buffer to draw the surface we
-  // want projected
-  // note that we're matching the resolution of the
-  // CornerPinSurface.
-  // (The offscreen buffer can be P2D or P3D)
-  offscreen = createGraphics(400, 300, P3D);
-}
+int timeOfLastUpdate = millis();
 
-void draw() {
+int[][] starts = {{120, 70}, {170, 70}, {220, 70}, {270, 70}, {320, 70}, {370, 70}, {420, 70}}; // top dark strip
+int[][] targets = {{120, 400}, {170, 400}, {220, 400}, {270, 400}, {320, 400}, {370, 400}, {420, 400}}; // End of animation
+int[][] ends = {{120, 430}, {170, 430}, {220, 430}, {270, 430}, {320, 430}, {370, 430}, {420, 430}}; // Bottom dark strip
+int[] bottom_left = {70, 430}; // Bottom of left dark strip
+int[] top_left = {70, 70}; // Top of left dark strip
 
-  // Convert the mouse coordinate into surface coordinates
-  // this will allow you to use mouse events inside the 
-  // surface from your screen. 
-  PVector surfaceMouse = surface.getTransformedMouse();
-
-  // Draw the scene, offscreen
-  offscreen.beginDraw();
-  offscreen.background(255);
-  offscreen.fill(0, 255, 0);
-  offscreen.ellipse(surfaceMouse.x, surfaceMouse.y, 75, 75);
-  offscreen.endDraw();
-
-  // most likely, you'll want a black background to minimize
-  // bleeding around your projection area
-  background(0);
- 
-  // render the scene, transformed using the corner pin surface
-  surface.render(offscreen);
-}
-
-void keyPressed() {
-  switch(key) {
-  case 'c':
-    // enter/leave calibration mode, where surfaces can be warped 
-    // and moved
-    ks.toggleCalibration();
-    break;
-
-  case 'l':
-    // loads the saved layout
-    ks.load();
-    break;
-
-  case 's':
-    // saves the layout
-    ks.save();
-    break;
+void meteor_fall(int cubeIndex, float meteoriteMass) {
+  int massSpeed = (int)map(meteoriteMass, minMass, maxMass, 10, 255);
+  if (!falling[cubeIndex]) { // On first call of a meteor's fall
+    targets[cubeIndex][0] = 250;
+    targets[cubeIndex][1] = 400;
+    cubes[cubeIndex].target(0, targets[cubeIndex][0], targets[cubeIndex][1], 90);
+    timeOfLastUpdate = millis();
+    prevLoc[0] = cubes[cubeIndex].x;
+    prevLoc[1] = cubes[cubeIndex].y;
+    falling[cubeIndex] = true;
   }
+  
+  else { // Subsequent calls while falling
+    if (millis() - timeOfLastUpdate > 100) {
+      if (abs(prevLoc[0] - cubes[cubeIndex].x) < 2 && abs(prevLoc[1] - cubes[cubeIndex].y) < 2) {
+        cubes[0].motor(-massSpeed, -massSpeed, 50);
+        print("Pushing: ");
+        println(massSpeed);
+        //print("Prev: ");
+        //print(prevLoc[0]);
+        //print(", ");
+        //println(prevLoc[1]);
+        //print("Cube: ");
+        //print(cubes[0].x);
+        //print(", ");
+        //println(cubes[0].y);
+      }
+      else {
+        timeOfLastUpdate = millis();
+        prevLoc[0] = cubes[cubeIndex].x;
+        prevLoc[1] = cubes[cubeIndex].y;
+        //print("Prev: ");
+        //print(prevLoc[0]);
+        //print(", ");
+        //println(prevLoc[1]);
+        //print("Cube: ");
+        //print(cubes[0].x);
+        //print(", ");
+        //println(cubes[0].y);
+      }
+    }
+    else {
+      if (abs(250 - cubes[cubeIndex].x) > 20 || abs(400 - cubes[cubeIndex].y) > 20) {
+        println("Targeting");
+        cubes[cubeIndex].target(0, targets[cubeIndex][0], targets[cubeIndex][1], 90);
+      }
+      else {
+        falling[cubeIndex] = false;
+        Float removed = meteorites.remove(0);
+        print("Removed:");
+        println(removed);
+        println("Delay start");
+        delay(2000);
+        println("Delay end");
+        targets[cubeIndex][0] = starts[cubeIndex][0];
+        targets[cubeIndex][1] = starts[cubeIndex][1];
+      }
+    }
+  }
+  
 }
