@@ -7,16 +7,16 @@ CornerPinSurface surface;
 PGraphics offscreen;
 
 Table table;
-Table scopedTable;
+Table scopedTable = new Table();
 
 void setup() {
   table = loadTable("meteors.csv", "header");
   
   scopedTable.addColumn("name", Table.STRING);
   scopedTable.addColumn("year", Table.INT);
-  scopedTable.addColumn("reclat", Table.INT);
-  scopedTable.addColumn("reclong", Table.INT);
-  scopedTable.addColumn("mass", Table.STRING);
+  scopedTable.addColumn("reclat", Table.FLOAT);
+  scopedTable.addColumn("reclong", Table.FLOAT);
+  scopedTable.addColumn("mass", Table.FLOAT);
   
   scopedTable = scrawlYear(1990);//name year location mass
   
@@ -46,16 +46,24 @@ void drawMeteor(float x, float y, int z){
   offscreen.circle(x, y, z);
 }
 //name  id  nametype  recclass  mass (g)  fall  year  reclat  reclong  GeoLocation
+//name year reclat reclong mass
 Table scrawlYear(int meteorYear){
   scopedTable.clearRows();
   int i = 0;
   for (TableRow row : table.rows()) {
     if (row.getFloat("year") == meteorYear){
-      newRow = scopedTable.addRow();
+      TableRow newRow = scopedTable.addRow();
+      newRow.setString("name", row.getString("name"));
+      newRow.setInt("year", row.getInt("year"));
+      newRow.setFloat("reclat", row.getFloat("reclat"));
+      newRow.setFloat("reclong", row.getFloat("reclong"));
+      newRow.setFloat("mass", row.getFloat("mass (g)"));
       
     } else {
     }
   }
+  println(table.getRowCount());
+  println(scopedTable.getRowCount());
   saveTable(scopedTable, "data/" + meteorYear + ".csv");
   return null;
 }
