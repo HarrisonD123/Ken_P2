@@ -11,7 +11,14 @@ Table scopedTable;
 
 void setup() {
   table = loadTable("meteors.csv", "header");
-  scopedTable = scrawlYear(2012);//name year location mass
+  
+  scopedTable.addColumn("name", Table.STRING);
+  scopedTable.addColumn("year", Table.INT);
+  scopedTable.addColumn("reclat", Table.INT);
+  scopedTable.addColumn("reclong", Table.INT);
+  scopedTable.addColumn("mass", Table.STRING);
+  
+  scopedTable = scrawlYear(1990);//name year location mass
   
   size(900, 900, P3D);
   ks = new Keystone(this);
@@ -40,15 +47,16 @@ void drawMeteor(float x, float y, int z){
 }
 //name  id  nametype  recclass  mass (g)  fall  year  reclat  reclong  GeoLocation
 Table scrawlYear(int meteorYear){
-  scopedTable = table;
+  scopedTable.clearRows();
   int i = 0;
   for (TableRow row : table.rows()) {
     if (row.getFloat("year") == meteorYear){
-      table.removeRow(i);
+      newRow = scopedTable.addRow();
+      
     } else {
-      i++;
     }
   }
+  saveTable(scopedTable, "data/" + meteorYear + ".csv");
   return null;
 }
 
