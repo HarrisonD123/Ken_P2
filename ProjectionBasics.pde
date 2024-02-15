@@ -10,6 +10,7 @@ Table table;
 Table scopedTable = new Table();
 
 PImage[] fire = new PImage[24];
+PImage crater;
 
 void setup() {
   smooth();
@@ -20,6 +21,7 @@ void setup() {
     fire[i] = loadImage( "fire/fire" + i + ".gif" );
   }
   
+  crater = loadImage("crater.png");
   
   scopedTable.addColumn("name", Table.STRING);
   scopedTable.addColumn("year", Table.INT);
@@ -38,13 +40,16 @@ void setup() {
 void draw() {
   PVector surfaceMouse = surface.getTransformedMouse();
   offscreen.beginDraw();
-  offscreen.background(255);
+  
+  offscreen.background(0 ,0);
   offscreen.fill(#7CECED);
-  offscreen.rect(100, 100, 500, 500);
+  offscreen.rect(72, 72, 700-72, 700-72-72);
   offscreen.fill(#11CC2B);
-  offscreen.rect(100, 500, 500, 100);
+  offscreen.rect(72, 700-72-72, 700-72, 72);
   offscreen.fill(0, 0, 0);
+  //drawCrater(surfaceMouse.x, surfaceMouse.y, 200);
   drawMeteor(surfaceMouse.x, surfaceMouse.y);
+  
   offscreen.endDraw();
   background(0);
   surface.render(offscreen);
@@ -56,9 +61,13 @@ void drawRock(float x, float y, int z){
 }
 
 //assume width 30, as its the meteor width
-void drawMeteor (float x, float y){
+void drawMeteor(float x, float y){
   offscreen.image(fire[frameCount%24], x-30, y-70, 60, 80);
   drawRock(x, y, 30);
+}
+
+void drawCrater(float x, float y, float size){
+  offscreen.image(crater, x-size/2, y-(size/4), size, size/2);
 }
 
 //name  id  nametype  recclass  mass (g)  fall  year  reclat  reclong  GeoLocation
@@ -83,6 +92,11 @@ Table scrawlYear(int meteorYear){
   return scopedTable;
 }
 
+float convToProj(int toioCoord){
+  return map(toioCoord, 45, 455, 0, 700);
+}
+
+//convert any table to arraylist of tables
 ArrayList<TableRow> tableToArray(Table scrawlYear){
   ArrayList<TableRow> meteorites = new ArrayList<TableRow>();
   for (TableRow row : scrawlYear.rows()) {
