@@ -45,7 +45,6 @@ void draw() {
   offscreen.rect(100, 500, 500, 100);
   offscreen.fill(0, 0, 0);
   drawMeteor(surfaceMouse.x, surfaceMouse.y);
-  //offscreen.circle(surfaceMouse.x, surfaceMouse.y, 30);
   offscreen.endDraw();
   background(0);
   surface.render(offscreen);
@@ -75,14 +74,22 @@ Table scrawlYear(int meteorYear){
       newRow.setFloat("reclat", row.getFloat("reclat"));
       newRow.setFloat("reclong", row.getFloat("reclong"));
       newRow.setFloat("mass", row.getFloat("mass (g)"));
-      
     } else {
     }
   }
   println(table.getRowCount());
   println(scopedTable.getRowCount());
-  saveTable(scopedTable, "data/" + meteorYear + ".csv");
-  return null;
+  //saveTable(scopedTable, "data/" + meteorYear + ".csv");
+  return scopedTable;
+}
+
+ArrayList<TableRow> tableToArray(Table scrawlYear){
+  ArrayList<TableRow> meteorites = new ArrayList<TableRow>();
+  for (TableRow row : scrawlYear.rows()) {
+    meteorites.add(row);
+    print(row);
+  }
+  return meteorites;
 }
 
 void keyPressed() {
