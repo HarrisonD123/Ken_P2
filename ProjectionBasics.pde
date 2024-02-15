@@ -47,7 +47,7 @@ void draw() {
   offscreen.fill(#11CC2B);
   offscreen.rect(72, 700-72-72, 700-72, 72);
   offscreen.fill(0, 0, 0);
-  //drawCrater(surfaceMouse.x, surfaceMouse.y, 200);
+  drawLabel(surfaceMouse.x, surfaceMouse.y, "Meteor Name", "Info", "Info2");
   drawMeteor(surfaceMouse.x, surfaceMouse.y);
   
   offscreen.endDraw();
@@ -66,8 +66,20 @@ void drawMeteor(float x, float y){
   drawRock(x, y, 30);
 }
 
+//would recommend 40 for small, scale up as needed :3
 void drawCrater(float x, float y, float size){
   offscreen.image(crater, x-size/2, y-(size/4), size, size/2);
+}
+
+void drawLabel(float x, float y, String title, String text, String text2){
+  offscreen.fill(255);
+  offscreen.rect(x + 10, y - 60, 200, 50);
+  offscreen.fill(0);
+  textSize(128);
+  offscreen.text(title, x + 15, y - 45);
+  textSize(96);
+  offscreen.text(text, x + 15, y - 30);
+  offscreen.text(text, x + 15, y - 18);
 }
 
 //name  id  nametype  recclass  mass (g)  fall  year  reclat  reclong  GeoLocation
