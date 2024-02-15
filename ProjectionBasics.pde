@@ -9,8 +9,17 @@ PGraphics offscreen;
 Table table;
 Table scopedTable = new Table();
 
+PImage[] fire = new PImage[24];
+
 void setup() {
+  smooth();
+  frameRate(20);
   table = loadTable("meteors.csv", "header");
+  
+  for (int i = 0; i < 24; i++){
+    fire[i] = loadImage( "fire/fire" + i + ".gif" );
+  }
+  
   
   scopedTable.addColumn("name", Table.STRING);
   scopedTable.addColumn("year", Table.INT);
@@ -35,16 +44,24 @@ void draw() {
   offscreen.fill(#11CC2B);
   offscreen.rect(100, 500, 500, 100);
   offscreen.fill(0, 0, 0);
-  drawMeteor(surfaceMouse.x, surfaceMouse.y, 30);
-  offscreen.circle(surfaceMouse.x, surfaceMouse.y, 30);
+  drawMeteor(surfaceMouse.x, surfaceMouse.y);
+  //offscreen.circle(surfaceMouse.x, surfaceMouse.y, 30);
   offscreen.endDraw();
   background(0);
   surface.render(offscreen);
 }
 
-void drawMeteor(float x, float y, int z){
+void drawRock(float x, float y, int z){
+  offscreen.fill(135);
   offscreen.circle(x, y, z);
 }
+
+//assume width 30, as its the meteor width
+void drawMeteor (float x, float y){
+  offscreen.image(fire[frameCount%24], x-30, y-70, 60, 80);
+  drawRock(x, y, 30);
+}
+
 //name  id  nametype  recclass  mass (g)  fall  year  reclat  reclong  GeoLocation
 //name year reclat reclong mass
 Table scrawlYear(int meteorYear){
